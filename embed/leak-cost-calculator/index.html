@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://roundrockleakrepairpros.com/embed/leak-cost-calculator">
+<title>Leak Cost Calculator | Round Rock TX</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:15px;line-height:1.5;color:#27272A;background:transparent;padding:16px}
+h1{font-size:18px;font-weight:900;color:#27272A;margin-bottom:4px}
+p.intro{font-size:13px;color:#52525B;margin-bottom:16px}
+.tool-label{display:block;font-size:12.5px;font-weight:700;color:#52525B;margin:12px 0 4px}
+select,input[type="number"]{width:100%;border:2px solid #ECE4D3;border-radius:8px;padding:9px 11px;font-size:14px;color:#27272A;background:#fff;-webkit-appearance:none}
+select:focus,input:focus{border-color:#F59E0B;outline:none}
+.seg{display:flex;flex-wrap:wrap;gap:0;margin-bottom:6px}
+.seg button{padding:8px 12px;border:2px solid #ECE4D3;background:#fff;font-size:13px;font-weight:700;cursor:pointer;color:#52525B;border-right:none}
+.seg button:first-child{border-radius:8px 0 0 8px}
+.seg button:last-child{border-radius:0 8px 8px 0;border-right:2px solid #ECE4D3}
+.seg button.active{background:#F59E0B;color:#27272A;border-color:#F59E0B}
+.calc-btn{display:block;width:100%;background:#27272A;color:#fff;border:none;border-radius:9px;padding:12px;font-size:15px;font-weight:900;cursor:pointer;margin-top:12px}
+.calc-btn:hover{background:#18181B}
+.result{background:#FFF8EC;border:2px solid #F59E0B;border-radius:12px;padding:16px;margin-top:14px;display:none}
+.big{font-size:28px;font-weight:900;color:#27272A;line-height:1.1}
+.sub{font-size:12.5px;color:#52525B;margin-top:4px}
+.note{font-size:13px;background:#fff;border-left:3px solid #F59E0B;padding:8px 12px;border-radius:0 6px 6px 0;margin-top:10px}
+.warn{font-size:13px;color:#92400E;background:#FEF3C7;border:1px solid #F59E0B;border-radius:7px;padding:9px 12px;margin-top:8px}
+.good{font-size:13px;color:#065F46;background:#ECFDF5;border:1px solid #10B981;border-radius:7px;padding:9px 12px;margin-top:8px}
+.cta{display:block;background:#F59E0B;color:#27272A;font-weight:900;font-size:14px;text-align:center;padding:11px;border-radius:9px;text-decoration:none;margin-top:12px}
+.cta:hover{background:#FCD34D}
+.branding{text-align:center;font-size:11.5px;color:#A1A1AA;margin-top:12px}
+.branding a{color:#A1A1AA}
+@media(max-width:400px){.seg button{font-size:11.5px;padding:7px 8px}}
+</style>
+</head>
+<body>
+<h1>Leak Cost Calculator</h1>
+<p class="intro">City of Round Rock water rates (5 tiers). Includes winter sewer impact.</p>
+
+<label class="tool-label">Leak type</label>
+<div class="seg">
+  <button id="eb-btn-drip" class="active" onclick="ebSet('drip')">Dripping faucet</button>
+  <button id="eb-btn-toilet" onclick="ebSet('toilet')">Running toilet</button>
+  <button id="eb-btn-trickle" onclick="ebSet('trickle')">Trickle</button>
+  <button id="eb-btn-irr" onclick="ebSet('irr')">Sprinkler</button>
+</div>
+
+<div id="eb-drip-row">
+  <label class="tool-label">Drips per minute</label>
+  <div class="seg">
+    <button onclick="document.getElementById('eb-dpm').value=10">Slow (10)</button>
+    <button onclick="document.getElementById('eb-dpm').value=60">Steady (60)</button>
+    <button onclick="document.getElementById('eb-dpm').value=120">Fast (120)</button>
+  </div>
+  <input id="eb-dpm" type="number" min="0" value="60" style="margin-top:6px">
+</div>
+<div id="eb-toilet-row" style="display:none">
+  <label class="tool-label">Gallons per day (running toilet)</label>
+  <input id="eb-toilet-gal" type="number" min="0" value="480">
+</div>
+<div id="eb-gph-row" style="display:none">
+  <label class="tool-label">Gallons per hour</label>
+  <input id="eb-gph" type="number" min="0" value="60">
+</div>
+
+<label class="tool-label">Number of leaking fixtures</label>
+<input id="eb-count" type="number" min="1" value="1">
+
+<label class="tool-label">Currently November through February?</label>
+<select id="eb-winter">
+  <option value="no">No</option>
+  <option value="yes">Yes (winter billing window)</option>
+</select>
+
+<button class="calc-btn" onclick="ebCalc()">Calculate Cost</button>
+
+<div class="result" id="eb-result"></div>
+
+<div class="branding">Powered by <a href="https://roundrockleakrepairpros.com" target="_blank" rel="noopener">Round Rock Leak Repair Pros</a></div>
+
+<script>
+var EB_TIERS = [[10000,2.57],[18000,3.63],[26000,4.70],[34000,7.04],[Infinity,7.96]];
+var EB_BASE = 6000;
+var ebType = "drip";
+
+function ebWaterCost(gpm) {
+    function tc(g) {
+        var c=0,p=0;
+        for(var i=0;i<EB_TIERS.length;i++){if(g<=0)break;var ch=Math.min(g,EB_TIERS[i][0]-p);c+=ch/1000*EB_TIERS[i][1];g-=ch;p=EB_TIERS[i][0];}
+        return c;
+    }
+    return Math.max(0,tc(EB_BASE+gpm)-tc(EB_BASE));
+}
+function ebTier(gpm) {
+    var t=EB_BASE+gpm;
+    if(t>34000)return "Tier 5 ($7.96)";
+    if(t>26000)return "Tier 4 ($7.04)";
+    if(t>18000)return "Tier 3 ($4.70)";
+    if(t>10000)return "Tier 2 ($3.63)";
+    return "";
+}
+function ebSet(t) {
+    ebType=t;
+    ["drip","toilet","trickle","irr"].forEach(function(x){
+        document.getElementById("eb-btn-"+x).classList.remove("active");
+        var row=document.getElementById("eb-"+x+"-row");
+        if(row) row.style.display="none";
+    });
+    document.getElementById("eb-btn-"+t).classList.add("active");
+    var activeRow=document.getElementById("eb-"+t+"-row");
+    if(activeRow) activeRow.style.display="";
+    else if(t==="trickle"||t==="irr") document.getElementById("eb-gph-row").style.display="";
+}
+function ebCalc() {
+    var count=parseInt(document.getElementById("eb-count").value)||1;
+    var isWinter=document.getElementById("eb-winter").value==="yes";
+    var isIrr=(ebType==="irr");
+    var gpd=0;
+    if(ebType==="drip"){var dpm=parseFloat(document.getElementById("eb-dpm").value)||0;gpd=(dpm*60*24)/15140;}
+    else if(ebType==="toilet"){gpd=parseFloat(document.getElementById("eb-toilet-gal").value)||480;}
+    else{var gph=parseFloat(document.getElementById("eb-gph").value)||0;gpd=gph*24;}
+    gpd*=count;
+    var gpm=gpd*30.44;
+    var gpy=gpd*365;
+    var mc=ebWaterCost(gpm);
+    var yc=mc*12;
+    var tn=ebTier(gpm);
+    var bathtubs=Math.round(gpy/36);
+    var res=document.getElementById("eb-result");
+    res.style.display="block";
+    if(gpd<=0){res.innerHTML="<p class=\"sub\">Enter a leak rate above.</p>";return;}
+    var html="<div class=\"big\">$"+mc.toFixed(2)+"<span style=\"font-size:14px;font-weight:400\">/month</span></div>"
+        +"<p class=\"sub\">"+Math.round(gpm)+" gal/month &middot; $"+yc.toFixed(2)+"/year &middot; "+bathtubs.toLocaleString()+" bathtubs/year</p>"
+        +"<div class=\"note\"><strong>$"+mc.toFixed(2)+"/month, $"+yc.toFixed(2)+"/year</strong> added to your Round Rock water bill.</div>";
+    if(tn) html+="<div class=\"warn\">Usage may enter "+tn+" per 1,000 gal.</div>";
+    if(isIrr) html+="<div class=\"good\">Irrigation leaks drain to yard, not sewer. Water cost only.</div>";
+    else if(isWinter){var s=(gpm/1000)*3.21*12;html+="<div class=\"warn\"><strong>Winter alert:</strong> This leak could add $"+s.toFixed(2)+" in extra sewer charges over the next year.</div>";}
+    else html+="<div class=\"good\">Sewer bill not affected outside the Nov-Feb window.</div>";
+    html+="<a class=\"cta\" href=\"tel:+15127376168\">\uD83D\uDCDE Call (512) 737-6168</a>";
+    res.innerHTML=html;
+}
+</script>
+</body>
+</html>
