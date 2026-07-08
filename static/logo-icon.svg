@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" width="100" height="120" role="img" aria-label="Round Rock Leak Repair Pros icon">
+  <title>Round Rock Leak Repair Pros</title>
+  <!-- Location pin silhouette — dark slate -->
+  <path d="M50 5 C28 5,10 23,10 45 C10 75,50 116,50 116 C50 116,90 75,90 45 C90 23,72 5,50 5 Z" fill="#27272A"/>
+  <!-- White circle window in pin head -->
+  <circle cx="50" cy="44" r="24" fill="#FFFFFF"/>
+  <!-- Amber water droplet — spans white area and slate body -->
+  <path d="M50 85 C38 70,34 60,34 51 C34 40,41 35,50 35 C59 35,66 40,66 51 C66 60,62 70,50 85 Z" fill="#F59E0B"/>
+</svg>
